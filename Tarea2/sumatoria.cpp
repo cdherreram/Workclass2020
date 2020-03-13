@@ -14,7 +14,7 @@ int main (void)
   
   while ( x < 0.5)
     {
-      std::tie(contador, sum) < sumBad ( x, eps);
+      std::tie(contador, sum) sumBad( x , eps);
       err = fabs(sum-sin(x))/sin(x);
       std::cout << x << "\t" << contador << "\t" << sum << "\t" << err << std::endl;
       x+=0.01;
@@ -29,10 +29,10 @@ std::tuple<int, double> sumBad( double x, double eps)
   double sum = 0;
   int i = 3;
   int contador = 0;
-
+  
   while ( fabs(term/sum) >= error){
     sum = sum + term;
-    term = term*(-x*x)/i;
+    term = term*(-x*x)/(i*(i-1));
     i += 2;
 
     contador++;
@@ -40,4 +40,11 @@ std::tuple<int, double> sumBad( double x, double eps)
   return std::make_tuple(contador, sum);
 }
 
-  //double sumGood( double x )
+double sumGood( double x ){
+  int N = 100;
+  double sum = x;
+  for (int ii=1; ii < N; ii++){
+    sum += pow(-1,ii-1)*pow(x,2ii-1)/factorial(2ii-1);
+  }
+      
+}
