@@ -3,7 +3,7 @@
 # $@ -> nombre del target
 
 CXX=g++
-CXXFLAGS=-fsanitize=address -fsanitize=undefined
+CXXFLAGS= -fsanitize=address
 
 all : suma.x datos.txt suma.pdf
 
