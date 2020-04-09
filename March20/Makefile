@@ -2,7 +2,8 @@
 # $< -> primera dependencia
 # $@ -> nombre del target
 
-CXX=g++
+CXX = g++
+GN = 
 CXXFLAGS= -fsanitize=address
 
 all : suma.x datos.txt suma.pdf
