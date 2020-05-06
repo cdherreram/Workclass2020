@@ -56,6 +56,7 @@ int main( void)
   std::vector<body> bodies(N);
 
   initial_conditions(bodies);
+  compute_force(bodies);
   print_system(bodies,0);
   
   return 0;
@@ -65,6 +66,18 @@ void initial_conditions(std::vector<body> & bodies){
   bodies[0].masa = 1.23;
   bodies[0].r[2] = 7.86;
   bodies[0].v[2] = 1.32;
+}
+
+void compute_force(std::vector<body> & bodies){
+  //reset forces
+  for( auto & cuerpo: bodies){
+    cuerpo.f[0] = cuerpo.f[1] = cuerpo.f[2] = 0.0;
+  }
+  
+  for( auto & cuerpo: bodies){
+    //add gravity
+    cuerpo.f[2] -= cuerpo.masa * G;
+  }
 }
 
 void print_system(std::vector<body> & bodies,double time){
