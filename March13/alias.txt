@@ -1,2 +1,0 @@
-alias g++="g++ -fsanitize=undefined"
-unalias

@@ -1,2 +1,0 @@
-Escape + x ---> M x
-load-theme
