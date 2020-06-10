@@ -2,9 +2,8 @@
 #include<vector>
 #include <fstream>
 
-/*Este programa simula un cuerpo que cae bajo accion de la gravedad y en el futuro va a rebotar contra el suelo y contra otros cuerpos
- */
-
+/*Este programa simula un cuerpo que cae bajo accion de la gravedad y
+  en el futuro va a rebotar contra el suelo y contra otros cuerpos */
 
 /*
   Cuerpo:
@@ -21,13 +20,13 @@ struct body{
 
 //simulation conditions
 const int N = 1;
-const double G = 0.00; //9.81;
+const double G = 9.81; //9.81;
 const double DT = 0.01;
 const double K = 123.9;
-const double B = 0.1;
-const double lx = 3.2;
-const double lxizq = -1.5;
-const double lzmax = 10.32;
+const double B = 0.8;
+const double lxder = 3.2;
+const double lxizq = 0.0;//-1.5;
+const double lzmax = 3.32;
 
 //helper function
 void initial_conditions(std::vector<body> & bodies);
@@ -68,7 +67,7 @@ int main( void)
   star_timeintegration(bodies,DT);
 
   //processsing
-  for ( int step = 0; step < 2000; ++step){
+  for ( int step = 0; step < 1000; ++step){
     double tstep =step*DT;
     std::cout << tstep << "  " 
               << bodies[0].r[0] << "  "
@@ -80,7 +79,7 @@ int main( void)
               << std::endl;
     timestep(bodies,DT);
     compute_force(bodies);
-    print_csv(bodies,step);
+    //print_csv(bodies,step);
   }
   
   //  print_system(bodies,0);
@@ -89,11 +88,12 @@ int main( void)
 }
 
 void initial_conditions(std::vector<body> & bodies){
-  bodies[0].masa = 1.23;
-  bodies[0].radio = 0.16;
-  bodies[0].r[2] = 7.86;
+  bodies[0].masa = 3.23;
+  bodies[0].radio = 0.11;
+  bodies[0].r[2] = 1.86;
+  bodies[0].r[0] = 0.9;
   bodies[0].v[0] = 0.87;
-  bodies[0].v[2] = 1.32;
+  bodies[0].v[2] = 0.52;
 }
 
 void compute_force(std::vector<body> & bodies){
@@ -103,28 +103,32 @@ void compute_force(std::vector<body> & bodies){
   }
 
   for( auto & cuerpo: bodies){
+    double delta = 0;
+    
     //add gravity
-    cuerpo.f[2] -= cuerpo.masa * G;
+    //cuerpo.f[2] -= cuerpo.masa * G;
+    
     //Fuerza de rebote con el suelo
-    double delta = cuerpo.radio - cuerpo.r[2];
-    if ( delta > 0){
-      cuerpo.f[2] += K*delta;
-      cuerpo.f[2] -= B*cuerpo.masa*cuerpo.v[0];
-    }
-    //Fuerza horizontal contra pared de la derecha
-    delta = cuerpo.r[0] + cuerpo.radio -lx;
+    delta = cuerpo.radio - cuerpo.r[2];
+    if ( delta > 0 ){
+      cuerpo.f[2] += K*delta - B*cuerpo.masa*cuerpo.v[2];
+      }
+    
+    //Fuerza contra la pared superior
+    delta = cuerpo.r[2] + cuerpo.radio - lzmax;
     if (delta > 0){
-     cuerpo.f[0] += -K*delta - B*cuerpo.masa*cuerpo.v[0];
+      cuerpo.f[2] += -K*delta - B*cuerpo.masa*cuerpo.v[2];
+      }
+    
+    //Fuerza horizontal contra pared de la derecha
+    delta = cuerpo.r[0] + cuerpo.radio -lxder;
+    if (delta > 0){
+      cuerpo.f[0] += -K*delta - B*cuerpo.masa*cuerpo.v[0];
     }
     //Fuerza horizontal contra pared de la izquierda
     delta = lxizq -(cuerpo.r[0] - cuerpo.radio);
     if (delta > 0){
-     cuerpo.f[0] += +K*delta - B*cuerpo.masa*cuerpo.v[0];
-    }
-    //Fuerza con techo
-    delta =cuerpo.r[2] + cuerpo.radio - lzmax;
-    if (delta > 0){
-     cuerpo.f[2] += -K*delta - B*cuerpo.masa*cuerpo.v[0];
+      cuerpo.f[0] += +K*delta - B*cuerpo.masa*cuerpo.v[0];
     }
   }
 }
